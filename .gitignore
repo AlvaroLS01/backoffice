@@ -1,0 +1,11 @@
+/.metadata/
+.settings
+**/.settings/
+.project
+**/.project
+**/target/**
+**/.classpath
+**/comerzzia-custom-backoffice-web/.tern-project
+/comerzzia-custom-backoffice-admin-web/*.factorypath
+/comerzzia-custom-backoffice-services/*.factorypath
+/comerzzia-custom-backoffice-web/*.factorypath
