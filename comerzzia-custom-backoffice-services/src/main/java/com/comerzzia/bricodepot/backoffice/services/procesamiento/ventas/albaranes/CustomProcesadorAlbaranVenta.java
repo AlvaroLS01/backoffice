@@ -74,6 +74,7 @@ import com.comerzzia.persistencia.general.clientes.ClientesDao;
 import com.comerzzia.persistencia.general.paises.PaisesDao;
 import com.comerzzia.servicios.fidelizacion.movimientos.MovimientoException;
 import com.comerzzia.servicios.fidelizacion.movimientos.ServicioMovimientosImpl;
+import com.comerzzia.servicios.general.almacenes.AlmacenException;
 import com.comerzzia.servicios.general.almacenes.AlmacenNotFoundException;
 import com.comerzzia.servicios.general.almacenes.ServicioAlmacenesImpl;
 import com.comerzzia.servicios.general.clientes.ClienteConstraintViolationException;
@@ -494,8 +495,15 @@ public class CustomProcesadorAlbaranVenta extends ProcesadorAlbaranVenta {
 			// El cliente no es el genérico del almacén. Se actualizan los datos.
 			if (!almacen.getCodCliente().equals(albaran.getCodCliente()) && condUidDocumentoOrigen) {
 				completarDatosClienteTicket(albaran.getCliente(), cliente);
-				ClientesDao.update(conn, datosSesion.getConfigEmpresa(), cliente);
+				try {
+					ServicioAlmacenesImpl.get().consultar(cliente.getCodCli(), datosSesion);
+				} catch (AlmacenException e) {
+					throw new SQLException("Error al consultar el almacen", e);
+				} catch (AlmacenNotFoundException e) {
+					ClientesDao.update(conn, datosSesion.getConfigEmpresa(), cliente);
+				}
 			}
+			
 			// El cliente es el genérico del almacén.
 			else {
 				// Si el documento genera factura.
@@ -514,14 +522,20 @@ public class CustomProcesadorAlbaranVenta extends ProcesadorAlbaranVenta {
 					if (cliente != null) {
 						// Sólo se actualizan los datos del cliente si NO es el genérico de la tienda.
 						if (!almacen.getCodCliente().equals(cliente.getCodCli())) {
-							if (albaran.getCliente().getCodTipoIden() != null && !albaran.getCliente().getCodTipoIden().isEmpty()) {
-								cliente.setCodTipoIden(albaran.getCliente().getCodTipoIden());
-							}
-							albaran.getCliente().setCodCli(cliente.getCodCli());
+							try {
+								ServicioAlmacenesImpl.get().consultar(cliente.getCodCli(), datosSesion);
+							} catch (AlmacenException e) {
+								throw new SQLException("Error al consultar el almacen", e);
+							} catch (AlmacenNotFoundException e) {
+								if (albaran.getCliente().getCodTipoIden() != null && !albaran.getCliente().getCodTipoIden().isEmpty()) {
+									cliente.setCodTipoIden(albaran.getCliente().getCodTipoIden());
+								}
+								albaran.getCliente().setCodCli(cliente.getCodCli());
 
-							completarDatosClienteTicket(albaran.getCliente(), cliente);
-							ClientesDao.update(conn, datosSesion.getConfigEmpresa(), cliente);
-							versionarClienteFactura(conn, datosSesion, cliente);
+								completarDatosClienteTicket(albaran.getCliente(), cliente);
+								ClientesDao.update(conn, datosSesion.getConfigEmpresa(), cliente);
+								versionarClienteFactura(conn, datosSesion, cliente);
+							}
 						}
 						albaran.setCodCliente(cliente.getCodCli());
 						if (cliente.getCodcliFactura() != null && !cliente.getCodcliFactura().isEmpty()) {

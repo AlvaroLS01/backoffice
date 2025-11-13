@@ -25,6 +25,7 @@ import com.comerzzia.web.base.WebKeys;
 
 import javazoom.upload.MultipartFormDataRequest;
 
+//TODO En esta clase hay logica duplicada en la impresion de ticket de factura, el procesador de notificaciones y del api omnichanel
 public class ImprimirAccion extends InformeAccion {
 
 	@Override

@@ -42,6 +42,8 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
  * ISK-185 Plantilla de ticket
  */
 
+//TODO En esta clase hay logica duplicada en la impresion de ticket de devolucion y factura y del api omnichanel
+
 @Component
 @SuppressWarnings({"deprecation" })
 public class GeneradorTicketEmailPDF {

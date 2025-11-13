@@ -54,6 +54,7 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 
+//TODO En esta clase hay logica duplicada en la impresion de ticket de devolucion, procesador de notificaciones y del api omnichanel
 public class ImprimirAccion extends InformeAccion {
 
 	public static final Vista NEXT_PAGE = new Vista("", Vista.INTERNA);
